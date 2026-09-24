@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>StreamGrab — Video & MP3</title>
+
+<style>
+:root {
+    --bg: #070b14;
+    --panel: #101827;
+    --panel2: #0b1220;
+    --border: #26354d;
+    --primary: #ef4444;
+    --primary2: #f97316;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --green: #22c55e;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at top right, #ef444422, transparent 30%),
+        radial-gradient(circle at bottom left, #7c3aed18, transparent 30%),
+        var(--bg);
+    color: var(--text);
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+}
+
+/* HEADER */
+
+header {
+    padding: 17px 5%;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #070b14dd;
+    backdrop-filter: blur(14px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.logo {
+    font-size: 21px;
+    font-weight: 900;
+    letter-spacing: -.7px;
+}
+
+.logo span {
+    color: #f87171;
+}
+
+.badge {
+    font-size: 11px;
+    color: #86efac;
+    border: 1px solid #166534;
+    background: #14532d44;
+    padding: 7px 11px;
+    border-radius: 20px;
+}
+
+/* MAIN */
+
+main {
+    width: min(1050px, 100%);
+    margin: auto;
+    padding: 45px 18px;
+}
+
+.hero {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.hero h1 {
+    font-size: clamp(32px, 6vw, 54px);
+    margin: 0;
+    letter-spacing: -2px;
+}
+
+.hero h1 span {
+    color: #f87171;
+}
+
+.hero p {
+    color: var(--muted);
+    line-height: 1.6;
+    margin: 12px auto 0;
+    max-width: 650px;
+}
+
+/* CARD */
+
+.card {
+    background: #101827ee;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 22px;
+    box-shadow: 0 20px 70px #00000044;
+}
+
+/* INPUT */
+
+.input-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #cbd5e1;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.url-row {
+    display: flex;
+    gap: 9px;
+}
+
+input[type="url"] {
+    flex: 1;
+    min-width: 0;
+    padding: 15px;
+    border-radius: 11px;
+    border: 1px solid var(--border);
+    background: #070d18;
+    color: white;
+    outline: none;
+    font-size: 14px;
+}
+
+input[type="url"]:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px #ef444422;
+}
+
+button {
+    border: 1px solid var(--border);
+    background: #1e293b;
+    color: white;
+    padding: 12px 17px;
+    border-radius: 10px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+    transition: .2s;
+}
+
+button:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.15);
+}
+
+.primary {
+    border: 0;
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary),
+            var(--primary2)
+        );
+}
+
+/* DEMO NOTICE */
+
+.notice {
+    margin-top: 13px;
+    padding: 11px 13px;
+    border-radius: 9px;
+    background: #172033;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* RESULT */
+
+.result {
+    display: none;
+    margin-top: 22px;
+}
+
+.result.show {
+    display: block;
+}
+
+.video-card {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 20px;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 15px;
+}
+
+.thumbnail {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 10px;
+    background: #020617;
+}
+
+.video-info h2 {
+    margin: 0 0 7px;
+    font-size: 19px;
+}
+
+.video-info p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* FORMAT */
+
+.formats {
+    margin-top: 20px;
+}
+
+.format-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.format-title h3 {
+    margin: 0;
+    font-size: 15px;
+}
+
+.format-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.format {
+    border: 1px solid var(--border);
+    background: #0b1322;
+    padding: 14px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.format-name {
+    font-weight: 800;
+    font-size: 13px;
+}
+
+.format-detail {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 3px;
+}
+
+.download-btn {
+    white-space: nowrap;
+    font-size: 12px;
+    padding: 9px 12px;
+}
+
+.mp3 {
+    border-color: #7c3aed55;
+}
+
+.mp3 .download-btn {
+    background: #6d28d9;
+    border-color: #7c3aed;
+}
+
+/* LOADING */
+
+.loading {
+    display: none;
+    text-align: center;
+    padding: 25px;
+    color: var(--muted);
+}
+
+.loading.show {
+    display: block;
+}
+
+.spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid #334155;
+    border-top-color: #ef4444;
+    border-radius: 50%;
+    margin: 0 auto 10px;
+    animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* FEATURES */
+
+.features {
+    display: grid;
+    grid-template-columns:
+        repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 22px;
+}
+
+.feature {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 17px;
+}
+
+.feature-icon {
+    font-size: 24px;
+}
+
+.feature h3 {
+    font-size: 14px;
+    margin: 9px 0 5px;
+}
+
+.feature p {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* FOOTER */
+
+footer {
+    text-align: center;
+    color: #64748b;
+    font-size: 11px;
+    padding: 25px;
+    line-height: 1.7;
+}
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+    main {
+        padding: 30px 12px;
+    }
+
+    .url-row {
+        flex-direction: column;
+    }
+
+    .url-row button {
+        width: 100%;
+    }
+
+    .video-card {
+        grid-template-columns: 1fr;
+    }
+
+    .format-list {
+        grid-template-columns: 1fr;
+    }
+
+    .features {
+        grid-template-columns: 1fr;
+    }
+
+    .badge {
+        display: none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        Stream<span>Grab.</span>
+    </div>
+
+    <div class="badge">
+        ● Browser Interface
+    </div>
+
+</header>
+
+
+<main>
+
+<section class="hero">
+
+    <h1>
+        Video & <span>MP3</span> Downloader
+    </h1>
+
+    <p>
+        Paste a video URL to preview its information
+        and choose the format you need for
+        authorized or locally hosted media.
+    </p>
+
+</section>
+
+
+<div class="card">
+
+    <label class="input-label">
+        Video URL
+    </label>
+
+    <div class="url-row">
+
+        <input
+            id="urlInput"
+            type="url"
+            placeholder="Paste your video URL here..."
+            autocomplete="off">
+
+        <button
+            class="primary"
+            onclick="previewVideo()">
+
+            🔍 Preview
+
+        </button>
+
+    </div>
+
+
+    <div class="notice">
+
+        ⚠️ Use this interface only for videos you own
+        or have permission to download. This page does
+        not bypass platform download restrictions.
+
+    </div>
+
+
+    <div
+        id="loading"
+        class="loading">
+
+        <div class="spinner"></div>
+
+        Processing URL...
+
+    </div>
+
+
+    <div
+        id="result"
+        class="result">
+
+        <div class="video-card">
+
+            <img
+                id="thumbnail"
+                class="thumbnail"
+                alt="Video thumbnail">
+
+            <div class="video-info">
+
+                <h2 id="videoTitle">
+                    Video Preview
+                </h2>
+
+                <p id="videoDescription">
+                    Video information will appear here.
+                </p>
+
+                <p>
+                    <b>URL:</b>
+                    <span id="displayUrl"></span>
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="formats">
+
+            <div class="format-title">
+
+                <h3>
+                    Available formats
+                </h3>
+
+                <span
+                    style="font-size:11px;color:#94a3b8">
+
+                    Authorized media only
+
+                </span>
+
+            </div>
+
+
+            <div class="format-list">
+
+                <!-- MP4 -->
+
+                <div class="format">
+
+                    <div>
+
+                        <div class="format-name">
+                            🎬 MP4 — 1080p
+                        </div>
+
+                        <div class="format-detail">
+                            Video · High quality
+                        </div>
+
+                    </div>
+
+                    <button
+                        class="download-btn"
+                        onclick="authorizedDownload('MP4 1080p')">
+
+                        Download
+
+                    </button>
+
+                </div>
+
+
+                <div class="format">
+
+                    <div>
+
+                        <div class="format-name">
+                            🎬 MP4 — 720p
+                        </div>
+
+                        <div class="format-detail">
+                            Video · HD
+                        </div>
+
+                    </div>
+
+                    <button
+                        class="download-btn"
+                        onclick="authorizedDownload('MP4 720p')">
+
+                        Download
+
+                    </button>
+
+                </div>
+
+
+                <!-- MP3 -->
+
+                <div class="format mp3">
+
+                    <div>
+
+                        <div class="format-name">
+                            🎵 MP3 — 320 kbps
+                        </div>
+
+                        <div class="format-detail">
+                            Audio · High quality
+                        </div>
+
+                    </div>
+
+                    <button
+                        class="download-btn"
+                        onclick="authorizedDownload('MP3 320kbps')">
+
+                        Download
+
+                    </button>
+
+                </div>
+
+
+                <div class="format mp3">
+
+                    <div>
+
+                        <div class="format-name">
+                            🎵 MP3 — 128 kbps
+                        </div>
+
+                        <div class="format-detail">
+                            Audio · Smaller size
+                        </div>
+
+                    </div>
+
+                    <button
+                        class="download-btn"
+                        onclick="authorizedDownload('MP3 128kbps')">
+
+                        Download
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- FEATURES -->
+
+<div class="features">
+
+    <div class="feature">
+
+        <div class="feature-icon">
+            ⚡
+        </div>
+
+        <h3>
+            Fast Interface
+        </h3>
+
+        <p>
+            Lightweight and responsive
+            design for mobile and desktop.
+        </p>
+
+    </div>
+
+
+    <div class="feature">
+
+        <div class="feature-icon">
+            🎵
+        </div>
+
+        <h3>
+            MP3 Support
+        </h3>
+
+        <p>
+            Provides an MP3 format option
+            for authorized media workflows.
+        </p>
+
+    </div>
+
+
+    <div class="feature">
+
+        <div class="feature-icon">
+            🔒
+        </div>
+
+        <h3>
+            Privacy First
+        </h3>
+
+        <p>
+            The interface itself does not
+            upload your URL to a third-party
+            downloader.
+        </p>
+
+    </div>
+
+</div>
+
+</main>
+
+
+<footer>
+
+    StreamGrab · Video & MP3 Interface
+
+    <br>
+
+    Use only with media you own or have permission to download.
+
+</footer>
+
+
+
+<script>
+
+/*
+==========================================================
+PREVIEW
+==========================================================
+*/
+
+function previewVideo() {
+
+    const input =
+        document.getElementById(
+            "urlInput"
+        );
+
+    const url =
+        input.value.trim();
+
+
+    if (!url) {
+
+        alert(
+            "Please paste a video URL first."
+        );
+
+        input.focus();
+
+        return;
+    }
+
+
+    try {
+
+        new URL(url);
+
+    } catch {
+
+        alert(
+            "Please enter a valid URL."
+        );
+
+        return;
+    }
+
+
+    const loading =
+        document.getElementById(
+            "loading"
+        );
+
+    const result =
+        document.getElementById(
+            "result"
+        );
+
+
+    loading.classList.add(
+        "show"
+    );
+
+    result.classList.remove(
+        "show"
+    );
+
+
+    /*
+       Demo preview.
+
+       A real media service can populate
+       title/thumbnail information here
+       for content you are authorized to access.
+    */
+
+    setTimeout(() => {
+
+        document.getElementById(
+            "displayUrl"
+        ).textContent =
+            url;
+
+
+        document.getElementById(
+            "videoTitle"
+        ).textContent =
+            "Video Ready";
+
+
+        document.getElementById(
+            "videoDescription"
+        ).textContent =
+            "This is a frontend preview. Connect this interface to your own authorized media server to provide actual downloadable files.";
+
+
+        /*
+           Generic placeholder thumbnail
+        */
+
+        document.getElementById(
+            "thumbnail"
+        ).src =
+            createPlaceholder();
+
+
+        loading.classList.remove(
+            "show"
+        );
+
+        result.classList.add(
+            "show"
+        );
+
+    }, 700);
+}
+
+
+
+/*
+==========================================================
+AUTHORIZED DOWNLOAD ACTION
+==========================================================
+*/
+
+function authorizedDownload(format) {
+
+    alert(
+        "Selected: " +
+        format +
+        "\\n\\n" +
+        "Connect this button to your own authorized media endpoint to download the actual file."
+    );
+}
+
+
+
+/*
+==========================================================
+PLACEHOLDER IMAGE
+==========================================================
+*/
+
+function createPlaceholder() {
+
+    const svg = `
+
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="640"
+            height="360"
+            viewBox="0 0 640 360">
+
+            <rect
+                width="640"
+                height="360"
+                fill="#111827"/>
+
+            <circle
+                cx="320"
+                cy="170"
+                r="48"
+                fill="#ef4444"/>
+
+            <polygon
+                points="307,143 307,197 350,170"
+                fill="white"/>
+
+            <text
+                x="320"
+                y="260"
+                text-anchor="middle"
+                fill="#94a3b8"
+                font-family="Arial"
+                font-size="20">
+
+                Video Preview
+
+            </text>
+
+        </svg>
+    `;
+
+
+    return "data:image/svg+xml;charset=UTF-8," +
+        encodeURIComponent(svg);
+}
+
+
+
+/*
+==========================================================
+ENTER KEY
+==========================================================
+*/
+
+document
+    .getElementById("urlInput")
+    .addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Enter"
+            ) {
+
+                previewVideo();
+            }
+        }
+    );
+
+</script>
+
+</body>
+</html>
